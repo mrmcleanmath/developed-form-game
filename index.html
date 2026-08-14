@@ -1,464 +1,253 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Developed Form — Game + Worksheet · Created by Mr. McLean Math</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Developed Form – Mr. McLean Math</title>
 <style>
-  :root{
-    --bg:#0b1226; --card:#101828; --text:#e5e7eb; --muted:#9ca3af; --line:#1f2937;
-    --accent:#38bdf8; --ok:#22c55e; --bad:#ef4444; --btn:#0f172a; --focus:#7dd3fc;
-    --tile:#132247; --tileHover:#1d2f5d; --drop:#0f1a30; --dropActive:#14304f;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
-    background:linear-gradient(180deg,#0b1226 0%, #0e1533 70%); color:var(--text);
-  }
-  .wrap{max-width:1150px; margin:0 auto; padding:16px}
-  header{display:flex; flex-wrap:wrap; gap:10px 12px; align-items:center; justify-content:space-between; padding:10px 0 8px 0}
-  header h1{font-size:18px; margin:0; font-weight:600; color:#f3f4f6}
-  .controls{display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center}
-  .control{display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.04); border:1px solid var(--line); padding:6px 8px; border-radius:10px}
-  select, button, input[type="checkbox"]{font:inherit}
-  select, .btn{ background:#0f172a; color:var(--text); border:1px solid var(--line); border-radius:10px; padding:8px 10px; cursor:pointer; }
-  select:focus, .btn:focus, .chip:focus, .drop:focus, .wcard button:focus{outline:3px solid var(--focus); outline-offset:2px}
-  .btn.primary{background:#0c1b3a}
-  .btn.secondary{background:#0c243a}
-  .btn.ghost{background:transparent; border-color:#334155}
-  .row{display:grid; gap:14px}
-  @media (min-width:1000px){ .row{grid-template-columns: 3fr 2fr} }
-  .card{
-    background:linear-gradient(180deg,#0f172a, #0b1226); border:1px solid var(--line);
-    border-radius:16px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.3);
-  }
-
-  /* Game */
-  .help{margin:0 0 10px 0; color:#9ca3af}
-  .number{
-    font-family: ui-monospace, Menlo, Consolas, "Courier New", monospace;
-    font-size:44px; letter-spacing:1px; text-align:center; margin:6px 0; white-space:pre; user-select:none;
-  }
-  .prompt{text-align:center; color:#cbd5e1; margin:0 0 8px 0; font-size:16px}
-  .drop{
-    min-height:64px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:10px; border:2px dashed #3b475a;
-    border-radius:12px; background:var(--drop); color:#e5e7eb; justify-content:flex-start;
-  }
-  .drop.active{ border-color:var(--accent); background:var(--dropActive) }
-  .chip{
-    padding:10px 12px; display:inline-flex; align-items:center; justify-content:center; background:var(--tile);
-    border:1px solid #2a3a73; border-radius:12px; cursor:grab; user-select:none; color:#e5e7eb; font-size:18px;
-  }
-  .chip.small{font-size:16px; padding:8px 10px}
-  .chip:hover{ background:var(--tileHover) }
-  .rackWrap{margin-top:10px}
-  .rackTitle{color:#cbd5e1; font-size:14px; margin:8px 0 4px}
-  .rack{display:flex; flex-wrap:wrap; gap:8px}
-  .centerControls{display:flex; gap:8px; justify-content:flex-end; margin-top:12px}
-  .feedback{margin-top:10px; padding:10px; border-radius:12px; border:1px solid var(--line); background:#0c162a}
-  .feedback.ok{border-color:#134e4a; background:#052e2b}
-  .feedback.bad{border-color:#4c1d1d; background:#2a0c0c}
-  .steps{margin-top:10px; border:1px solid var(--line); border-radius:12px}
-  .steps summary{cursor:pointer; padding:10px 12px; background:#0b182e; border-bottom:1px solid var(--line)}
-  .steps .content{padding:10px 12px; line-height:1.5}
-
-  /* Worksheet */
-  .wsHeader{ font-size: clamp(18px, 2.8vw, 24px); text-align:center; margin:0 0 6px 0; color:#cbd5e1; }
-  .wControls{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:6px 0 8px}
-  .wgrid{display:grid; gap:10px; grid-template-columns: repeat(1, minmax(300px, 1fr))}
-  @media (min-width:700px){ .wgrid{ grid-template-columns: repeat(2, minmax(300px, 1fr)); } }
-  @media (min-width:1100px){ .wgrid{ grid-template-columns: repeat(3, minmax(300px, 1fr)); } }
-  .wcard{ position:relative; border:1px solid #334155; border-radius:12px; background:#0f1a30; padding:12px; display:flex; flex-direction:column; gap:8px; }
-  .wlabel{
-    position:absolute; top:8px; left:10px; font-weight:700; font-size:14px; color:#cbd5e1; opacity:.9;
-    background:rgba(255,255,255,0.06); border:1px solid #334155; padding:2px 8px; border-radius:999px;
-  }
-  .wNum{ font-family: ui-monospace, Menlo, Consolas, "Courier New", monospace; font-size: clamp(26px, 4.2vw, 36px); text-align:center; white-space:pre; line-height:1.15; }
-  .wbtns{display:flex; gap:8px; justify-content:flex-end}
-  .wans{display:none; border-top:1px dashed #334155; padding-top:8px; color:#e5e7eb}
-
-  footer{margin:18px 0 8px; text-align:center; color:#9ca3af}
-
-  /* Popup */
-  .popup{position:fixed; left:50%; transform:translateX(-50%); top:18px; background:#0c1b3a; color:#e5e7eb;
-    padding:10px 14px; border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.4); display:none; z-index:1000}
-
-  /* High contrast */
-  body.hc{--bg:#000; --card:#000; --text:#fff; --muted:#eee; --line:#888; --accent:#fff; --ok:#0f0; --bad:#f00; --btn:#000; --tile:#111; --tileHover:#191919; --drop:#000; --dropActive:#111}
+:root{
+  --bg:#0b1226;--card:#101828;--text:#e5e7eb;--muted:#9ca3af;--line:#1f2937;
+  --accent:#38bdf8;--ok:#22c55e;--bad:#ef4444;--tile:#132247;--tileHover:#1d2f5d;
+  --drop:#0f1a30;--dropActive:#14304f;--shadow:0 10px 30px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#0b1226,#0e1533 70%);color:var(--text)}
+.wrap{max-width:980px;margin:0 auto;padding:18px 14px 28px}
+header{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px}
+h1{margin:0;font-size:clamp(24px,3vw,34px)}
+.subtitle{margin-top:5px;color:var(--muted);font-size:14px}
+.tabs,.levels,.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:inherit;background:#0f172a;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:9px 12px;font-weight:800;cursor:pointer}
+button.active,button.primary{background:#0c1b3a;border-color:#2a4c78}
+button:disabled{opacity:.5;cursor:not-allowed}
+.card{background:linear-gradient(180deg,#0f172a,#0b1226);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.label{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:6px}
+.number{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:clamp(38px,6vw,54px);text-align:center;margin:18px 0 8px;white-space:pre}
+.prompt{text-align:center;color:#cbd5e1;margin:0 0 12px}
+.drop{min-height:72px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px;border:2px dashed #3b475a;border-radius:12px;background:var(--drop)}
+.drop.active{border-color:var(--accent);background:var(--dropActive)}
+.chip{padding:10px 12px;display:inline-flex;align-items:center;justify-content:center;background:var(--tile);border:1px solid #2a3a73;border-radius:12px;cursor:grab;font-size:17px}
+.chip:hover{background:var(--tileHover)}
+.chip.small{padding:8px 10px;font-size:16px}
+.rackWrap{margin-top:12px}.rackTitle{color:#cbd5e1;font-size:14px;margin-bottom:6px;font-weight:800}.rack{display:flex;flex-wrap:wrap;gap:8px}
+.controls{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+.feedback{display:none;margin-top:12px;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:#0c162a}
+.feedback.ok{display:block;border-color:#134e4a;background:#052e2b}.feedback.bad{display:block;border-color:#4c1d1d;background:#2a0c0c}
+.steps{display:none;margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;line-height:1.5}
+.stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.stat{padding:7px 11px;border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:800}
+.worksheet{display:none}
+.ws-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+select{font:inherit;background:#0f172a;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+.wgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.wcard{position:relative;border:1px solid #334155;border-radius:12px;background:#0f1a30;padding:12px}
+.wlabel{position:absolute;top:8px;left:10px;font-size:13px;color:#cbd5e1}
+.wNum{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:clamp(26px,4vw,36px);text-align:center;margin:12px 0 8px}
+.wans{display:none;border-top:1px dashed #334155;padding-top:8px;color:#cbd5e1}.wans.show{display:block}
+.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:14px}
+@media(max-width:700px){.wgrid{grid-template-columns:1fr}}
+@media print{
+  body{background:#fff;color:#000}.wrap{max-width:none;padding:0}
+  header,#practiceCard,.no-print,.footer{display:none!important}
+  #worksheetCard{display:block!important;background:#fff;color:#000;border:0;box-shadow:none;padding:0}
+  .wgrid{grid-template-columns:repeat(2,1fr)}.wcard{background:#fff;color:#000;border-color:#000}.wans{display:none!important}
+}
 </style>
 </head>
 <body>
-<div id="popup" class="popup" role="status" aria-live="polite"></div>
-
 <div class="wrap">
-  <header>
-    <h1>Developed Form — Game + Worksheet</h1>
-    <div class="controls" role="toolbar" aria-label="Controls">
-      <div class="control">
-        <label for="modeSel">Mode</label>
-        <select id="modeSel" aria-label="Mode select">
-          <option value="game" selected>Game</option>
-          <option value="worksheet">Worksheet</option>
-        </select>
-      </div>
-      <div class="control">
-        <label for="difficulty">Difficulty</label>
-        <select id="difficulty" aria-label="Select difficulty">
-          <option value="easy" selected>Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-          <option value="mixed">Mixed</option>
-        </select>
-      </div>
-      <div class="control">
-        <label><input type="checkbox" id="timerToggle" /> Timer</label>
-        <select id="timerLen" aria-label="Timer length" disabled>
-          <option value="30">30 s</option>
-          <option value="60" selected>60 s</option>
-          <option value="90">90 s</option>
-          <option value="120">120 s</option>
-        </select>
-        <span id="timeLeft" aria-live="polite" style="min-width:60px; text-align:right; display:inline-block;"></span>
-      </div>
-      <div class="control">
-        <label><input type="checkbox" id="soundToggle" checked /> Sound</label>
-      </div>
-      <div class="control">
-        <label><input type="checkbox" id="contrastToggle" /> High contrast</label>
-      </div>
-      <button class="btn ghost" id="resetBtn" title="Reset session (keeps settings)">Reset</button>
-    </div>
-  </header>
-
-  <div class="row">
-    <!-- MAIN -->
-    <section class="card">
-      <p class="help"><details><summary>Help</summary>
-        <div style="margin-top:6px;line-height:1.5">
-          In <b>Game</b> mode, drag the correct terms to build the number in <i>developed form</i> (e.g., <code>742</code> → <code>700 + 40 + 2</code>), then <b>Submit</b>.<br/>
-          In <b>Worksheet</b> mode, generate 5/10/15 numbered cards and click <i>Reveal</i> or <i>Reveal all</i>.
-        </div>
-      </details></p>
-
-      <!-- GAME -->
-      <div id="gameView">
-        <div class="number" id="questionNum"></div>
-        <p class="prompt">Build the developed form by dragging terms into the drop area.</p>
-
-        <div id="drop" class="drop" aria-label="Drop terms here" tabindex="0"></div>
-
-        <div class="rackWrap">
-          <div class="rackTitle">Terms</div>
-          <div id="rack" class="rack" aria-label="Available terms"></div>
-        </div>
-
-        <div class="centerControls">
-          <button class="btn secondary" id="clearBtn">Clear</button>
-          <button class="btn primary" id="submitBtn">Submit</button>
-          <button class="btn" id="nextBtn" disabled>Next</button>
-        </div>
-
-        <div id="feedback" class="feedback" aria-live="polite" style="display:none"></div>
-
-        <details id="steps" class="steps" style="display:none">
-          <summary>Show Steps</summary>
-          <div class="content" id="stepsContent"></div>
-        </details>
-      </div>
-
-      <!-- WORKSHEET -->
-      <div id="wsView" style="display:none">
-        <div class="wsHeader">Write each number in <b>developed form</b>.</div>
-        <div class="wControls">
-          <label for="wsCount">Set size:</label>
-          <select id="wsCount" aria-label="Worksheet set size">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15" selected>15</option>
-          </select>
-          <button class="btn primary" id="wsGen">Regenerate</button>
-          <button class="btn" id="wsRevealAll">Reveal all</button>
-          <button class="btn" id="wsHideAll">Hide all</button>
-        </div>
-        <div id="wsGrid" class="wgrid" aria-label="Worksheet problems grid"></div>
-      </div>
-    </section>
-
-    <!-- SUMMARY -->
-    <aside id="summaryCard" class="card">
-      <h3 style="margin:0 0 6px 0; font-size:15px; color:#cbd5e1;">Session Summary</h3>
-      <div id="summary">
-        <div>Total rounds: <span id="sumTotal">0</span></div>
-        <div>Correct rounds: <span id="sumCorrect">0</span></div>
-        <div>Accuracy: <span id="sumAcc">0%</span></div>
-        <div>Score: <span id="sumScore">0</span></div>
-        <div>Streak: <span id="sumStreak">0</span></div>
-      </div>
-      <details id="incorrectList" style="margin-top:8px">
-        <summary>Incorrect Rounds (0)</summary>
-        <div id="incItems" style="margin-top:6px; display:grid; gap:8px"></div>
-      </details>
-      <footer style="margin-top:12px">Created by Mr. McLean Math</footer>
-    </aside>
+<header>
+  <div>
+    <h1>Developed Form</h1>
+    <div class="subtitle">Build each number from its non-zero place-value terms.</div>
   </div>
+  <div class="tabs">
+    <button id="practiceTab" class="active" type="button">Practice</button>
+    <button id="worksheetTab" type="button">Worksheet</button>
+  </div>
+</header>
+
+<section id="practiceCard" class="card">
+  <div class="toolbar">
+    <div>
+      <div class="label">Difficulty</div>
+      <div class="levels">
+        <button class="level active" data-diff="easy" type="button">Foundation</button>
+        <button class="level" data-diff="medium" type="button">Core</button>
+        <button class="level" data-diff="hard" type="button">Challenge</button>
+      </div>
+    </div>
+    <button id="newBtn" type="button">New Question</button>
+  </div>
+
+  <div id="questionNum" class="number"></div>
+  <p class="prompt">Build the developed form by placing the correct terms below.</p>
+
+  <div id="drop" class="drop" tabindex="0"></div>
+
+  <div class="rackWrap">
+    <div class="rackTitle">Terms</div>
+    <div id="rack" class="rack"></div>
+  </div>
+
+  <div class="controls">
+    <button id="clearBtn" type="button">Clear</button>
+    <button id="submitBtn" class="primary" type="button">Check</button>
+    <button id="nextBtn" type="button" disabled>Next</button>
+  </div>
+
+  <div id="feedback" class="feedback"></div>
+  <div id="steps" class="steps"></div>
+
+  <div class="stats">
+    <div class="stat">Correct: <span id="correct">0</span></div>
+    <div class="stat">Incorrect: <span id="incorrect">0</span></div>
+  </div>
+</section>
+
+<section id="worksheetCard" class="card worksheet">
+  <div class="ws-top">
+    <div>
+      <div style="font-size:19px;font-weight:900">Worksheet</div>
+      <div id="wsMeta" class="subtitle">Write each number in developed form.</div>
+    </div>
+    <div class="row no-print">
+      <label style="font-size:13px;font-weight:800">Questions
+        <select id="wsCount"><option>5</option><option>10</option><option selected>15</option></select>
+      </label>
+      <button id="wsGen" class="primary" type="button">Generate</button>
+      <button id="wsRevealAll" type="button" disabled>Reveal All</button>
+      <button id="wsHideAll" type="button" disabled>Hide All</button>
+      <button id="printBtn" type="button" disabled>Print</button>
+    </div>
+  </div>
+  <div id="wsGrid" class="wgrid"></div>
+</section>
+
+<div class="footer">Created by Mr. McLean Math.</div>
 </div>
 
 <script>
-(function(){
-  const $ = s=>document.querySelector(s);
-  const el = {
-    modeSel:$("#modeSel"), difficulty:$("#difficulty"),
-    timerToggle:$("#timerToggle"), timerLen:$("#timerLen"), timeLeft:$("#timeLeft"),
-    soundToggle:$("#soundToggle"), contrastToggle:$("#contrastToggle"), resetBtn:$("#resetBtn"),
+(() => {
+"use strict";
+const $=id=>document.getElementById(id);
+const randInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 
-    // Game
-    questionNum:$("#questionNum"), drop:$("#drop"), rack:$("#rack"),
-    clearBtn:$("#clearBtn"), submitBtn:$("#submitBtn"), nextBtn:$("#nextBtn"),
-    feedback:$("#feedback"), steps:$("#steps"), stepsContent:$("#stepsContent"),
+const DIFF={
+  easy:{min:100,max:999},
+  medium:{min:1000,max:99999},
+  hard:{min:100000,max:9999999}
+};
 
-    // Worksheet
-    wsView:$("#wsView"), wsCount:$("#wsCount"), wsGen:$("#wsGen"), wsGrid:$("#wsGrid"),
-    wsRevealAll:$("#wsRevealAll"), wsHideAll:$("#wsHideAll"),
+let difficulty="easy",current=null,evaluated=false,correct=0,incorrect=0;
+const selected=new Set();
 
-    // Views
-    gameView:$("#gameView"), summaryCard:$("#summaryCard"),
-
-    // Summary
-    sumTotal:$("#sumTotal"), sumCorrect:$("#sumCorrect"), sumAcc:$("#sumAcc"),
-    sumScore:$("#sumScore"), sumStreak:$("#sumStreak"),
-    incorrectList:$("#incorrectList"), incItems:$("#incItems"),
-
-    popup:$("#popup")
-  };
-
-  // ---------- utilities ----------
-  const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
-  const pick=a=>a[Math.floor(Math.random()*a.length)];
-  function formatSpaces(n){
-    const s=String(n), neg=s[0]==='-'; const d=neg?s.slice(1):s;
-    if(d.length<=3) return (neg?'-':'')+d;
-    const r=[...d].reverse(); const out=[];
-    for(let i=0;i<r.length;i++){ if(i>0 && i%3===0) out.push(' '); out.push(r[i]); }
-    return (neg?'-':'')+out.reverse().join('');
+function formatSpaces(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ")}
+function numberToTerms(n){
+  const s=String(n),terms=[];
+  for(let i=0;i<s.length;i++){
+    const d=Number(s[i]),pow=s.length-1-i;
+    if(d!==0)terms.push(d*10**pow);
   }
-  function beep(ok){
-    if(!state.soundOn) return;
-    try{
-      const C=new (window.AudioContext||window.webkitAudioContext)(), o=C.createOscillator(), g=C.createGain();
-      o.type="sine"; o.frequency.value=ok?880:220; g.gain.value=0.12; o.connect(g); g.connect(C.destination);
-      o.start(); setTimeout(()=>{o.stop();C.close();},150);
-    }catch(_){}
+  return terms;
+}
+function genNumber(){
+  const cfg=DIFF[difficulty];
+  let n=randInt(cfg.min,cfg.max);
+  while(/^([1-9])0+$/.test(String(n)))n=randInt(cfg.min,cfg.max);
+  return n;
+}
+function clearDrop(){
+  if(evaluated)return;
+  selected.clear();$("drop").innerHTML="";
+}
+function addToDrop(val){
+  if(evaluated||selected.has(val))return;
+  selected.add(val);
+  const b=document.createElement("button");b.type="button";b.className="chip small";b.textContent=formatSpaces(val);
+  b.addEventListener("click",()=>{if(evaluated)return;selected.delete(val);b.remove()});
+  $("drop").appendChild(b);
+}
+function setupDrop(){
+  const d=$("drop");
+  ["dragover","dragenter"].forEach(evt=>d.addEventListener(evt,e=>{e.preventDefault();d.classList.add("active")}));
+  ["dragleave","drop"].forEach(evt=>d.addEventListener(evt,()=>d.classList.remove("active")));
+  d.addEventListener("drop",e=>{e.preventDefault();const v=Number(e.dataTransfer.getData("text/plain"));if(Number.isFinite(v))addToDrop(v)});
+}
+setupDrop();
+
+function buildRack(){
+  $("rack").innerHTML="";
+  const pool=new Set(current.terms),s=String(current.num),L=s.length;
+  for(let i=0;i<L;i++){
+    const d=Number(s[i]),pow=L-1-i;
+    if(!d)continue;
+    if(pow>0)pool.add(d*10**(pow-1));
+    pool.add(Math.max(1,Math.min(9,d+1))*10**pow);
+    pool.add(Math.max(1,d-1)*10**pow);
   }
-  function popup(msg){ el.popup.textContent=msg; el.popup.style.display="block"; setTimeout(()=>el.popup.style.display="none",900); }
-
-  // ---------- difficulty ----------
-  const DIFF = {
-    easy:   {min:100,      max:999},        // e.g., 742
-    medium: {min:1000,     max:99999},      // e.g., 6 837
-    hard:   {min:100000,   max:9999999},    // e.g., 120 580 or into millions
-    mixed:  {min:100,      max:9999999}
-  };
-
-  // ---------- state ----------
-  let state = {
-    round:0,total:0,correct:0,score:0,streak:0,incorrect:[],
-    num:0, terms:[], // correct terms as numbers
-    timerOn:false, timeRemaining:0, timerId:null, soundOn:true
-  };
-
-  // ---------- term building ----------
-  function numberToTerms(n){
-    const s=String(n); const L=s.length; const terms=[];
-    for(let i=0;i<L;i++){
-      const d=parseInt(s[i],10);
-      const pow=L-1-i;
-      if(d!==0) terms.push(d*Math.pow(10,pow));
-    }
-    return terms;
-  }
-
-  function genNumber(){
-    const cfg=DIFF[el.difficulty.value];
-    let n=ri(cfg.min,cfg.max);
-    // avoid numbers with all zeros after first digit (too trivial)
-    while(/^([1-9])0+$/.test(String(n))) n=ri(cfg.min,cfg.max);
-    return n;
-  }
-
-  function newProblem(){
-    state.num = genNumber();
-    state.terms = numberToTerms(state.num);
-    el.questionNum.textContent = formatSpaces(state.num);
-    buildRack();
-    clearDrop();
-  }
-
-  // ---------- rack / drop ----------
-  function buildRack(){
-    el.rack.innerHTML="";
-    const correct = new Set(state.terms);
-    // include correct terms + distractors near the real ones
-    const pool = new Set(state.terms);
-    const s = String(state.num), L=s.length;
-    // neighbor place distractors (e.g., 7*10^k shifted)
-    for(let i=0;i<L;i++){
-      const d=parseInt(s[i],10);
-      const pow=L-1-i;
-      if(d===0) continue;
-      if(pow>0) pool.add(d*Math.pow(10,pow-1));
-      pool.add(Math.max(1,Math.min(9,d+1))*Math.pow(10,pow));
-      pool.add(Math.max(1,d-1)*Math.pow(10,pow));
-    }
-    // random powers to fill up to ~10 chips
-    while(pool.size<10){
-      const rp = ri(0, Math.min(6,L)); const rd=ri(1,9);
-      pool.add(rd*Math.pow(10,rp));
-    }
-    // create chips
-    [...pool].sort((a,b)=>a-b).forEach(val=>{
-      const b=document.createElement('button');
-      b.className='chip'; b.draggable=true; b.dataset.val=String(val);
-      b.textContent=formatSpaces(val);
-      b.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',b.dataset.val));
-      b.addEventListener('click',()=>addToDrop(val));
-      el.rack.appendChild(b);
-    });
-  }
-
-  function clearDrop(){ el.drop.innerHTML=""; selected.clear(); }
-  const selected = new Set();
-
-  function addToDrop(val){
-    if(selected.has(val)) return; // avoid duplicates
-    selected.add(val);
-    const tag=document.createElement('button');
-    tag.className='chip small';
-    tag.textContent=formatSpaces(val);
-    tag.dataset.val=String(val);
-    tag.title='Click to remove';
-    tag.addEventListener('click',()=>{ selected.delete(val); tag.remove(); });
-    el.drop.appendChild(tag);
-  }
-
-  el.drop.addEventListener('dragover',e=>{e.preventDefault(); el.drop.classList.add('active');});
-  el.drop.addEventListener('dragenter',e=>{e.preventDefault(); el.drop.classList.add('active');});
-  el.drop.addEventListener('dragleave',()=>el.drop.classList.remove('active'));
-  el.drop.addEventListener('drop',e=>{
-    e.preventDefault();
-    el.drop.classList.remove('active');
-    const v=parseInt(e.dataTransfer.getData('text/plain'),10);
-    if(!isNaN(v)) addToDrop(v);
+  while(pool.size<10){const rp=randInt(0,Math.min(6,L)),rd=randInt(1,9);pool.add(rd*10**rp)}
+  [...pool].sort((a,b)=>a-b).forEach(v=>{
+    const b=document.createElement("button");b.type="button";b.className="chip";b.draggable=true;b.textContent=formatSpaces(v);
+    b.addEventListener("dragstart",e=>e.dataTransfer.setData("text/plain",String(v)));
+    b.addEventListener("click",()=>addToDrop(v));$("rack").appendChild(b);
   });
+}
+function newQuestion(){
+  current={num:genNumber()};current.terms=numberToTerms(current.num);evaluated=false;selected.clear();
+  $("questionNum").textContent=formatSpaces(current.num);$("drop").innerHTML="";buildRack();
+  $("feedback").style.display="none";$("feedback").className="feedback";$("feedback").textContent="";
+  $("steps").style.display="none";$("steps").innerHTML="";
+  $("submitBtn").disabled=false;$("nextBtn").disabled=true;
+}
+function submit(){
+  if(!current||evaluated)return;
+  if(selected.size===0){$("feedback").style.display="block";$("feedback").className="feedback";$("feedback").textContent="Choose at least one term first.";return;}
+  const your=[...selected].sort((a,b)=>b-a),corr=current.terms.slice().sort((a,b)=>b-a);
+  const ok=your.length===corr.length&&your.every((v,i)=>v===corr[i]);
+  evaluated=true;$("submitBtn").disabled=true;$("nextBtn").disabled=false;
+  $("steps").innerHTML=`Number: <b>${formatSpaces(current.num)}</b><br>Developed form: <b>${corr.map(formatSpaces).join(" + ")}</b>`;
+  if(ok){correct++;$("correct").textContent=correct;$("feedback").className="feedback ok";$("feedback").textContent="Correct!";}
+  else{incorrect++;$("incorrect").textContent=incorrect;$("feedback").className="feedback bad";$("feedback").textContent=`Not quite. Correct: ${corr.map(formatSpaces).join(" + ")}`;$("steps").style.display="block";}
+  $("feedback").style.display="block";
+}
 
-  // ---------- feedback / summary ----------
-  function showFeedback(ok,msg){ el.feedback.style.display='block'; el.feedback.className='feedback '+(ok?'ok':'bad'); el.feedback.textContent=msg; beep(ok); }
-  function hideFeedback(){ el.feedback.style.display='none'; el.feedback.className='feedback'; el.feedback.textContent=''; el.steps.style.display='none'; el.steps.open=false; }
-  function buildSteps(){
-    const correct=state.terms.slice().sort((a,b)=>b-a).map(formatSpaces).join(' + ');
-    el.stepsContent.innerHTML = `
-      <div>Number: <b>${formatSpaces(state.num)}</b></div>
-      <div>Developed form: <b>${correct}</b></div>`;
-    el.steps.style.display='block';
-  }
-  function updateSummary(){
-    el.sumTotal.textContent=state.total; el.sumCorrect.textContent=state.correct;
-    el.sumAcc.textContent=state.total?Math.round(100*state.correct/state.total)+'%':'0%';
-    el.sumScore.textContent=state.score; el.sumStreak.textContent=state.streak;
-    el.incorrectList.querySelector('summary').textContent='Incorrect Rounds ('+state.incorrect.length+')';
-    el.incItems.innerHTML='';
-    state.incorrect.forEach((it,i)=>{
-      const d=document.createElement('div'); d.style.cssText='border:1px solid #334155;border-radius:10px;padding:8px';
-      d.innerHTML=`<div><b>Round ${it.round}</b></div>
-        <div>${formatSpaces(it.num)}</div>
-        <div>Your: <b>${it.your.join(' + ')||'(none)'}</b></div>
-        <div>Correct: <b>${it.correct.join(' + ')}</b></div>`;
-      el.incItems.appendChild(d);
-    });
-  }
+document.querySelectorAll(".level").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".level").forEach(x=>x.classList.remove("active"));b.classList.add("active");difficulty=b.dataset.diff;newQuestion();
+}));
+$("newBtn").addEventListener("click",newQuestion);$("submitBtn").addEventListener("click",submit);$("nextBtn").addEventListener("click",newQuestion);$("clearBtn").addEventListener("click",clearDrop);
+document.addEventListener("keydown",e=>{
+  if($("practiceCard").style.display==="none")return;
+  if(e.key==="Enter"){e.preventDefault();evaluated?newQuestion():submit()}
+  else if(e.key==="Escape"){e.preventDefault();clearDrop()}
+});
 
-  function submitRound(){
-    const your=[...selected].sort((a,b)=>b-a).map(formatSpaces);
-    const corr=state.terms.slice().sort((a,b)=>b-a).map(formatSpaces);
-    const ok = your.length===corr.length && your.every((v,i)=>v===corr[i]);
-    state.total+=1;
-    if(ok){ state.correct+=1; state.streak+=1; state.score+=10; if(state.streak%5===0){state.score+=5; popup('Streak bonus +5!');} showFeedback(true,'Correct! +10'); }
-    else{ state.streak=0; showFeedback(false,'Not quite. See steps below.'); state.incorrect.push({round:state.round, num:state.num, your:your, correct:corr}); }
-    updateSummary(); buildSteps(); el.nextBtn.disabled=false;
-  }
+function showPractice(){$("practiceTab").classList.add("active");$("worksheetTab").classList.remove("active");$("practiceCard").style.display="block";$("worksheetCard").style.display="none"}
+function showWorksheet(){$("worksheetTab").classList.add("active");$("practiceTab").classList.remove("active");$("practiceCard").style.display="none";$("worksheetCard").style.display="block"}
+$("practiceTab").addEventListener("click",showPractice);$("worksheetTab").addEventListener("click",showWorksheet);
 
-  // ---------- timer ----------
-  function tick(){
-    if(state.timeRemaining<=0){ clearInterval(state.timerId); state.timerId=null; el.timeLeft.textContent='0 s'; el.submitBtn.disabled=true; el.nextBtn.disabled=false; return; }
-    state.timeRemaining-=1; el.timeLeft.textContent=state.timeRemaining+' s';
-  }
+function wsCard(n,i){
+  const terms=numberToTerms(n),c=document.createElement("div");c.className="wcard";
+  c.innerHTML=`<div class="wlabel">${i+1}</div><div class="wNum">${formatSpaces(n)}</div>`;
+  const ans=document.createElement("div");ans.className="wans";ans.innerHTML=`Developed form: <b>${terms.map(formatSpaces).join(" + ")}</b>`;
+  const b=document.createElement("button");b.type="button";b.className="no-print";b.textContent="Reveal";b.addEventListener("click",()=>{ans.classList.toggle("show");b.textContent=ans.classList.contains("show")?"Hide":"Reveal"});
+  c.append(b,ans);return c;
+}
+function generateWs(){
+  const n=Number($("wsCount").value),grid=$("wsGrid");grid.innerHTML="";
+  for(let i=0;i<n;i++)grid.appendChild(wsCard(genNumber(),i));
+  const labels={easy:"Foundation",medium:"Core",hard:"Challenge"};$("wsMeta").textContent=`${labels[difficulty]} • ${n} questions`;
+  $("wsRevealAll").disabled=$("wsHideAll").disabled=$("printBtn").disabled=false;
+}
+$("wsGen").addEventListener("click",generateWs);
+$("wsRevealAll").addEventListener("click",()=>document.querySelectorAll(".wans").forEach(x=>x.classList.add("show")));
+$("wsHideAll").addEventListener("click",()=>document.querySelectorAll(".wans").forEach(x=>x.classList.remove("show")));
+$("printBtn").addEventListener("click",()=>window.print());
 
-  // ---------- worksheet ----------
-  function buildWorksheet(){
-    el.wsGrid.innerHTML='';
-    const count=parseInt(el.wsCount.value,10);
-    for(let i=0;i<count;i++){
-      const n=genNumber(); const terms=numberToTerms(n);
-      const card=document.createElement('div'); card.className='wcard';
-      card.innerHTML=`<div class="wlabel">${i+1}</div>
-        <div class="wNum">${formatSpaces(n)}</div>
-        <div class="wbtns"><button class="btn secondary wReveal">Reveal</button></div>
-        <div class="wans">Developed form: <b>${terms.map(formatSpaces).join(' + ')}</b></div>`;
-      const ans=card.querySelector('.wans'), btn=card.querySelector('.wReveal');
-      btn.addEventListener('click',()=>{const show=ans.style.display!=='block'; ans.style.display=show?'block':'none'; btn.textContent=show?'Hide':'Reveal';});
-      el.wsGrid.appendChild(card);
-    }
-  }
-
-  // ---------- events ----------
-  el.submitBtn.addEventListener('click',submitRound);
-  el.nextBtn.addEventListener('click',()=>{ next(); if(state.timerOn && !state.timerId){ state.timeRemaining=parseInt(el.timerLen.value,10); el.timeLeft.textContent=state.timeRemaining+' s'; state.timerId=setInterval(tick,1000);} });
-  el.clearBtn.addEventListener('click',clearDrop);
-
-  el.difficulty.addEventListener('change',()=> el.modeSel.value==='game'? next() : buildWorksheet());
-  el.modeSel.addEventListener('change',()=>{
-    if(el.modeSel.value==='game'){
-      el.gameView.style.display='block'; el.wsView.style.display='none'; el.summaryCard.style.display='block'; next();
-    }else{
-      el.gameView.style.display='none'; el.wsView.style.display='block'; el.summaryCard.style.display='none'; buildWorksheet();
-    }
-  });
-
-  el.wsGen.addEventListener('click',buildWorksheet);
-  el.wsCount.addEventListener('change',buildWorksheet);
-  el.wsRevealAll.addEventListener('click',()=>{ el.wsGrid.querySelectorAll('.wans').forEach(n=>n.style.display='block'); el.wsGrid.querySelectorAll('.wReveal').forEach(b=>b.textContent='Hide'); });
-  el.wsHideAll.addEventListener('click',()=>{ el.wsGrid.querySelectorAll('.wans').forEach(n=>n.style.display='none'); el.wsGrid.querySelectorAll('.wReveal').forEach(b=>b.textContent='Reveal'); });
-
-  el.timerToggle.addEventListener('change',()=>{
-    const on=el.timerToggle.checked; el.timerLen.disabled=!on;
-    if(!on){ if(state.timerId){clearInterval(state.timerId); state.timerId=null;} state.timerOn=false; el.timeLeft.textContent=''; }
-    else { state.timerOn=true; state.timeRemaining=parseInt(el.timerLen.value,10); el.timeLeft.textContent=state.timeRemaining+' s'; if(!state.timerId) state.timerId=setInterval(tick,1000); }
-  });
-  el.timerLen.addEventListener('change',()=>{ if(el.timerToggle.checked){ state.timeRemaining=parseInt(el.timerLen.value,10); el.timeLeft.textContent=state.timeRemaining+' s'; }});
-  el.soundToggle.addEventListener('change',()=> state.soundOn = el.soundToggle.checked);
-  el.contrastToggle.addEventListener('change',()=> document.body.classList.toggle('hc', el.contrastToggle.checked));
-  el.resetBtn.addEventListener('click',()=>{
-    if(state.timerId){clearInterval(state.timerId); state.timerId=null;}
-    state={...state, round:0,total:0,correct:0,score:0,streak:0,incorrect:[],timerOn:false,timeRemaining:0};
-    el.timeLeft.textContent=''; el.submitBtn.disabled=false; el.nextBtn.disabled=true;
-    updateSummary();
-    el.modeSel.value==='game'? next() : buildWorksheet();
-  });
-
-  // keyboard: Enter submit, Esc clear (game only)
-  document.addEventListener('keydown',e=>{
-    if(el.modeSel.value!=='game')return;
-    if(e.key==='Enter') submitRound();
-    else if(e.key==='Escape') clearDrop();
-  });
-
-  function next(){ hideFeedback(); clearDrop(); state.round+=1; newProblem(); el.nextBtn.disabled=true; }
-
-  // init
-  document.body.classList.toggle('hc', el.contrastToggle.checked);
-  el.timerLen.disabled=!el.timerToggle.checked;
-  function bootstrap(){ updateSummary(); next(); }
-  bootstrap();
+window.__MMM_TEST__={numberToTerms,DIFF};
+newQuestion();
 })();
 </script>
 </body>
